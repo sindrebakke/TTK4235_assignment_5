@@ -1,26 +1,22 @@
-SOURCE_FILES := main.c calculations.c system.c
 SOURCE_DIR := source
 BUILD_DIR := build
-OBJ := $(patsubst %.c,$(BUILD_DIR)/%.o,$(SOURCE_FILES))
+SOURCES := main.c calculations.c system.c
+OBJECTS := $(SOURCES:%.c=$(BUILD_DIR)/%.o)
 
 CC := gcc
 CFLAGS := -O0 -g3 -Wall -Werror
 
-.DEFAULT_GOAL := main
-
-main : $(OBJ)
+main: $(OBJECTS)
 	$(CC) $(CFLAGS) $^ -o $@
 
-$(BUILD_DIR) :
-	mkdir -p $@
-
-$(BUILD_DIR)/%.o : $(SOURCE_DIR)/%.c | $(BUILD_DIR)
+$(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.c
+	@mkdir -p $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-.PHONY: docs
-docs : | doxconfig
+docs:
 	doxygen doxconfig
 
-.PHONY: clean
-clean :
-	rm -rf $(BUILD_DIR) $(.DEFAULT_GOAL)
+clean:
+	rm -rf $(BUILD_DIR) main
+
+.PHONY: docs clean
